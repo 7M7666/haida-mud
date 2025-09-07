@@ -1271,7 +1271,7 @@ void Game::talk(const std::string& npc_name) {
         return;
     }
     
-    const NPC* npc = loc->findNPC(npc_name);
+    NPC* npc = const_cast<NPC*>(loc->findNPC(npc_name));
     if(!npc) {
         std::cout<<"这里没有名为 "<<npc_name<<" 的NPC。\n";
         return;
@@ -1293,53 +1293,37 @@ void Game::talk(const std::string& npc_name) {
         // 钱道然也使用主菜单系统
         current_dialogue_id = "main_menu";
     } else if (npc_name == "苏小萌") {
-        std::cout << "调试苏小萌对话：";
         if (auto* tk = state_.task_manager.getTask("side_canteen_choice")) {
-            std::cout << "任务状态=" << static_cast<int>(tk->getStatus());
             if (tk->getStatus() == TaskStatus::COMPLETED) {
                 current_dialogue_id = "s1_chat"; // 完成后显示支线任务3承接内容
-                std::cout << " -> s1_chat (已完成)";
             } else if (tk->getStatus() == TaskStatus::IN_PROGRESS) {
                 // 检查是否已经选择过食物（通过好感度标记）
                 bool has_chosen_food = state_.player.getNPCFavor("苏小萌") > 0;
-                std::cout << ", 好感度=" << state_.player.getNPCFavor("苏小萌") << ", 已选择食物=" << has_chosen_food;
                 if (has_chosen_food) {
                     // 已经选择过食物，直接进入咖啡因灵液需求阶段
                     current_dialogue_id = "s1_after_pick";
-                    std::cout << " -> s1_after_pick (已选择食物)";
                 } else {
                     // 还没有选择食物，进入选择界面
                     current_dialogue_id = "s1_choose";
-                    std::cout << " -> s1_choose (未选择食物)";
                 }
             } else {
                 current_dialogue_id = "welcome"; // 默认首次欢迎
-                std::cout << " -> welcome (未接取任务)";
             }
         } else {
             current_dialogue_id = "welcome"; // 未接取任务
-            std::cout << "无任务 -> welcome";
         }
-        std::cout << "\n";
     } else if (npc_name == "陆天宇") {
-        std::cout << "调试陆天宇对话：";
         if (auto* tk = state_.task_manager.getTask("side_gym_fragments")) {
-            std::cout << "任务状态=" << static_cast<int>(tk->getStatus());
             if (tk->getStatus() == TaskStatus::COMPLETED) {
                 current_dialogue_id = "s2_done"; // 完成后显示支线任务4承接内容
-                std::cout << " -> s2_done (已完成)";
             } else if (tk->getStatus() == TaskStatus::IN_PROGRESS) {
                 current_dialogue_id = "s2_turnin"; // 进行中→直接进入交付界面
-                std::cout << " -> s2_turnin (进行中)";
             } else {
                 current_dialogue_id = "welcome"; // 未接取任务
-                std::cout << " -> welcome (未接取任务)";
             }
         } else {
             current_dialogue_id = "welcome"; // 未接取任务
-            std::cout << "无任务 -> welcome";
         }
-        std::cout << "\n";
     } else if (npc_name == "钱道然") {
         // 钱道然使用主菜单系统
         current_dialogue_id = "main_menu";
@@ -1359,24 +1343,14 @@ void Game::talk(const std::string& npc_name) {
     while(true) {
         const DialogueNode* node = npc->getDialogue(current_dialogue_id);
         if(!node) {
-            std::cout << "调试信息：NPC=" << npc_name << ", 对话ID=" << current_dialogue_id << ", 默认对话=" << npc->defaultDialogue() << "\n";
-            std::cout << "可用对话数量=" << npc->getDialogues().size() << "\n";
-            std::cout << "可用的对话ID：";
-            for (const auto& [id, dialogue] : npc->getDialogues()) {
-                std::cout << " '" << id << "'";
-            }
-            std::cout << "\n";
-            
             // 尝试使用默认对话ID
             if (current_dialogue_id != npc->defaultDialogue() && !npc->defaultDialogue().empty()) {
-                std::cout << "尝试使用默认对话ID: " << npc->defaultDialogue() << "\n";
                 current_dialogue_id = npc->defaultDialogue();
                 continue;
             }
             
             // 如果还是没有对话，尝试使用第一个可用的对话
             if (!npc->getDialogues().empty()) {
-                std::cout << "尝试使用第一个可用对话\n";
                 current_dialogue_id = npc->getDialogues().begin()->first;
                 continue;
             }
@@ -1616,9 +1590,6 @@ void Game::talk(const std::string& npc_name) {
                 bool should_check_conditions = !((npc_name == "林清漪" || npc_name == "钱道然") && 
                                                 (current_dialogue_id == "main_menu" || current_dialogue_id.empty()));
                 
-                std::cout << "调试选项检查：NPC=" << npc_name << ", 对话ID=" << current_dialogue_id 
-                         << ", 选项文本=" << option.text << ", 需要检查条件=" << should_check_conditions << "\n";
-                
                 if (should_check_conditions) {
                     auto inventory_items = state_.player.inventory().asSimpleItems();
                     std::unordered_map<std::string, int> inventory_map;
@@ -1626,14 +1597,10 @@ void Game::talk(const std::string& npc_name) {
                         inventory_map[item.id] = item.count;
                     }
                     bool can_choose = npc->canChooseOption(option, player_favor, inventory_map);
-                    std::cout << "条件检查结果：can_choose=" << can_choose << ", 好感度=" << player_favor 
-                             << ", requirement=" << option.requirement << "\n";
                     if(!can_choose) {
                         std::cout<<"条件不满足，无法选择此选项。\n";
                         continue;
                     }
-                } else {
-                    std::cout << "跳过条件检查（林清漪/钱道然主菜单）\n";
                 }
                 
                 // 增加好感度
@@ -1714,16 +1681,19 @@ void Game::talk(const std::string& npc_name) {
                             current_dialogue_id = option.next_dialogue_id;
                         }
                     }
-                    // 为林清漪和钱道然实现特殊的对话跳转逻辑
-                    else if ((npc_name == "林清漪" || npc_name == "钱道然") && current_dialogue_id == "main_menu" && option.next_dialogue_id != "main_menu") {
-                        // 主菜单的选项选择后，先跳转到对应对话，然后自动回到主菜单
-                        current_dialogue_id = option.next_dialogue_id;
-                    } else if (npc_name == "钱道然" && option.next_dialogue_id == "main_menu") {
-                        // 钱道然的子对话返回主菜单
-                        current_dialogue_id = "main_menu";
-                    } else {
-                        current_dialogue_id = option.next_dialogue_id;
-                    }
+                // 为林清漪和钱道然实现特殊的对话跳转逻辑
+                else if ((npc_name == "林清漪" || npc_name == "钱道然") && current_dialogue_id == "main_menu" && option.next_dialogue_id != "main_menu") {
+                    // 主菜单的选项选择后，先跳转到对应对话，然后自动回到主菜单
+                    current_dialogue_id = option.next_dialogue_id;
+                } else if (npc_name == "林清漪" && option.next_dialogue_id == "main_menu") {
+                    // 林清漪的子对话返回主菜单
+                    current_dialogue_id = "main_menu";
+                } else if (npc_name == "钱道然" && option.next_dialogue_id == "main_menu") {
+                    // 钱道然的子对话返回主菜单
+                    current_dialogue_id = "main_menu";
+                } else {
+                    current_dialogue_id = option.next_dialogue_id;
+                }
                 }
             } else {
                 std::cout<<"无效选择，请重新输入。\n";
@@ -2640,18 +2610,18 @@ void Game::updateMonsterSpawns() {
                                     stress_black_mist.addDropItem("caffeine_elixir", "咖啡因灵液", 1, 1, 0.50f);
                                     loc->enemies.push_back(stress_black_mist);
                                 } else if (spawn.monster_name == "文献综述怪") {
-                                    Enemy literature_review_monster(spawn.monster_name, Attributes{160, 160, 28, 12}, 70, 100);
+                                    Enemy literature_review_monster(spawn.monster_name, Attributes{280, 280, 50, 25}, 100, 150);
                                     literature_review_monster.setSpecialSkill("阅读", "每3回合进入阅读状态，DEF+50%，持续2回合");
                                     literature_review_monster.addDropItem("wenxin_key_i", "文心秘钥·I", 1, 1, 1.0f);
                                     loc->enemies.push_back(literature_review_monster);
                                 } else if (spawn.monster_name == "实验失败妖·复苏") {
-                                    Enemy failed_experiment_revive(spawn.monster_name, Attributes{140, 140, 30, 15}, 70, 100);
+                                    Enemy failed_experiment_revive(spawn.monster_name, Attributes{260, 260, 55, 30}, 100, 150);
                                     failed_experiment_revive.setSpecialSkill("召唤", "每3回合召唤1只实验失败妖，最多3只");
                                     failed_experiment_revive.setHasSlowSkill(true);
                                     failed_experiment_revive.addDropItem("wenxin_key_ii", "文心秘钥·II", 1, 1, 1.0f);
                                     loc->enemies.push_back(failed_experiment_revive);
                                 } else if (spawn.monster_name == "答辩紧张魔·强化") {
-                                    Enemy defense_anxiety_demon_enhanced(spawn.monster_name, Attributes{150, 150, 32, 18}, 80, 120);
+                                    Enemy defense_anxiety_demon_enhanced(spawn.monster_name, Attributes{300, 300, 60, 35}, 120, 180);
                                     defense_anxiety_demon_enhanced.setSpecialSkill("紧张施压", "每回合50%概率对玩家施加紧张(DEF-20%, 4回合)");
                                     defense_anxiety_demon_enhanced.setHasTensionSkill(true);
                                     defense_anxiety_demon_enhanced.addDropItem("wenxin_key_iii", "文心秘钥·III", 1, 1, 1.0f);
@@ -2730,21 +2700,7 @@ void Game::onMonsterDefeated(const std::string& location_id, const std::string& 
 
 int Game::calculateExperiencePenalty(const Enemy& enemy) {
     int player_level = state_.player.level();
-    int enemy_level = 1; // 默认等级
-    
-    // 根据敌人名称估算等级
-    if (enemy.name().find("迷糊书虫") != std::string::npos) enemy_level = 1;
-    else if (enemy.name().find("拖延小妖") != std::string::npos) enemy_level = 2;
-    else if (enemy.name().find("水波幻影") != std::string::npos) enemy_level = 3;
-    else if (enemy.name().find("学业焦虑影") != std::string::npos) enemy_level = 4;
-    else if (enemy.name().find("夜行怠惰魔") != std::string::npos) enemy_level = 6;
-    else if (enemy.name().find("压力黑雾") != std::string::npos) enemy_level = 7;
-    else if (enemy.name().find("实验失败妖") != std::string::npos) enemy_level = 8;
-    else if (enemy.name().find("答辩紧张魔") != std::string::npos) enemy_level = 8;
-    else if (enemy.name().find("高数难题精") != std::string::npos) enemy_level = 9;
-    else if (enemy.name().find("文献综述怪") != std::string::npos) enemy_level = 12;
-    else if (enemy.name().find("实验失败妖·复苏") != std::string::npos) enemy_level = 12;
-    else if (enemy.name().find("答辩紧张魔·强化") != std::string::npos) enemy_level = 12;
+    int enemy_level = enemy.getLevel(); // 使用Enemy类的getLevel()方法
     
     int level_diff = enemy_level - player_level;
     
@@ -2844,18 +2800,18 @@ Enemy Game::createMonsterByName(const std::string& monster_name) const {
         defense_anxiety_demon.setHasTensionSkill(true);
         return defense_anxiety_demon;
     } else if (monster_name == "文献综述怪") {
-        Enemy lit_review(monster_name, Attributes{220, 220, 40, 20}, 90, 130);
+        Enemy lit_review(monster_name, Attributes{280, 280, 50, 25}, 100, 150);
         lit_review.setSpecialSkill("阅读", "每3回合进入阅读状态，DEF+50%，持续2回合");
         lit_review.addDropItem("wenxin_key_i", "文心秘钥·I", 1, 1, 1.0f);
         return lit_review;
     } else if (monster_name == "实验失败妖·复苏") {
-        Enemy failed_experiment_revive(monster_name, Attributes{200, 200, 45, 25}, 90, 130);
+        Enemy failed_experiment_revive(monster_name, Attributes{260, 260, 55, 30}, 100, 150);
         failed_experiment_revive.setSpecialSkill("召唤", "每3回合召唤1只实验失败妖，最多3只");
         failed_experiment_revive.setHasSlowSkill(true);
         failed_experiment_revive.addDropItem("wenxin_key_ii", "文心秘钥·II", 1, 1, 1.0f);
         return failed_experiment_revive;
     } else if (monster_name == "答辩紧张魔·强化") {
-        Enemy defense_anxiety_demon_enhanced(monster_name, Attributes{250, 250, 50, 30}, 100, 150);
+        Enemy defense_anxiety_demon_enhanced(monster_name, Attributes{300, 300, 60, 35}, 120, 180);
         defense_anxiety_demon_enhanced.setSpecialSkill("紧张施压", "每回合50%概率对玩家施加紧张(DEF-20%, 4回合)");
         defense_anxiety_demon_enhanced.setHasTensionSkill(true);
         defense_anxiety_demon_enhanced.addDropItem("wenxin_key_iii", "文心秘钥·III", 1, 1, 1.0f);

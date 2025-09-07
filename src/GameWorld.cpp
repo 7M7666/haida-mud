@@ -16,6 +16,9 @@ void Game::setupWorld() {
     // 创建NPC
     createNPCs();
     
+    // 初始化NPC对话
+    initializeNPCDialogues();
+    
     // 创建物品
     createItems();
     
@@ -939,15 +942,54 @@ void Game::createTasks() {
 
 void Game::initializeNPCDialogues() {
     // 为所有地图位置的NPC添加对话内容
+    // 通过位置ID直接获取可修改的位置引用
     auto locations = state_.map.allLocations();
-    for (auto& location : locations) {
-        for (auto& npc : location.npcs) {
+    for (const auto& location : locations) {
+        auto* loc = state_.map.get(location.id);
+        if (!loc) continue;
+        
+        for (auto& npc : loc->npcs) {
             // 检查NPC是否已经有完整的对话数据（从存档加载）
-            // 如果对话数据为空，则需要重新初始化
+            // 如果对话数据为空或者不完整，则需要重新初始化
             bool needs_initialization = npc.getDialogues().empty();
             
+            // 对于林清漪，检查是否有完整的对话系统（应该有多个子对话）
+            if (npc.name() == "林清漪" && !needs_initialization) {
+                // 检查是否有必要的子对话ID
+                bool has_required_dialogues = npc.getDialogues().find("why_here") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("wenxin_info") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("equipment") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("teaching_area_info") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("debate_challenge") != npc.getDialogues().end();
+                if (!has_required_dialogues) {
+                    needs_initialization = true;
+                }
+            }
+            
+            // 对于陆天宇，检查是否有完整的对话系统
+            if (npc.name() == "陆天宇" && !needs_initialization) {
+                // 检查是否有必要的子对话ID
+                bool has_required_dialogues = npc.getDialogues().find("s2_turnin") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("s2_hint") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("s2_machine_info") != npc.getDialogues().end();
+                if (!has_required_dialogues) {
+                    needs_initialization = true;
+                }
+            }
+            
+            // 对于苏小萌，检查是否有完整的对话系统（应该有7个对话）
+            if (npc.name() == "苏小萌" && !needs_initialization) {
+                // 检查是否有必要的对话ID
+                bool has_required_dialogues = npc.getDialogues().find("welcome") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("s1_choose") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("s1_after_pick") != npc.getDialogues().end() &&
+                                            npc.getDialogues().find("s1_give") != npc.getDialogues().end();
+                if (!has_required_dialogues) {
+                    needs_initialization = true;
+                }
+            }
+
             if (needs_initialization) {
-                std::cout << "重新初始化NPC对话：" << npc.name() << " (对话数量=" << npc.getDialogues().size() << ")\n";
                 if (npc.name() == "林清漪") {
                     initializeLinQingyiDialogues(npc);
                 } else if (npc.name() == "钱道然") {
@@ -957,8 +999,6 @@ void Game::initializeNPCDialogues() {
                 } else if (npc.name() == "苏小萌") {
                     initializeSuXiaomengDialogues(npc);
                 }
-            } else {
-                std::cout << "NPC对话已存在，跳过初始化：" << npc.name() << " (对话数量=" << npc.getDialogues().size() << ")\n";
             }
         }
     }
@@ -1239,6 +1279,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     
     // 主对话 - welcome
     DialogueNode s1_start;
+    s1_start.id = "welcome";
     s1_start.npc_text = "（苏小萌站在食堂窗口前，双手抱头，一脸纠结）\n\n呜啊...今天到底吃什么好呢？\n\n（她看着菜单，眼中满是迷茫）\n\n麻辣烫？香辣可口，但是...会不会太辣了？\n牛肉面？清淡营养，但是...会不会太单调了？\n大盘鸡？分量十足，但是...会不会太油腻了？\n\n（她转向你，眼中带着求助的光芒）\n\n我...我每次都是这样，总是不知道该怎么选择。你能帮帮我吗？";
     s1_start.options = {
         DialogueOption{"当然可以！我来帮你选择。", "s1_choose", [this](){
@@ -1255,6 +1296,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     
     // 添加选择建议对话
     DialogueNode s1_advice;
+    s1_advice.id = "s1_advice";
     s1_advice.npc_text = "（苏小萌的眼中闪过一丝希望）\n\n真的吗？你也有选择困难症？\n\n（她靠近你，声音变得小声）\n\n其实...我每次都是这样。明明知道这些都是好选择，但就是不知道该怎么选。\n\n（她的声音变得有些沮丧）\n\n有时候我觉得，选择比考试还难。考试至少有个标准答案，但选择...每个选择都好像是对的，又好像都不对。\n\n（她看向你）\n\n你能...你能帮我分析一下吗？";
     s1_advice.options = {
         DialogueOption{"当然可以！让我帮你分析一下。", "s1_choose", [this](){
@@ -1274,6 +1316,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     npc.addDialogue("s1_advice", s1_advice);
     
     DialogueNode s1_choose;
+    s1_choose.id = "s1_choose";
     s1_choose.npc_text = "（苏小萌的眼中闪烁着期待的光芒）\n\n真的吗？太好了！\n\n（她重新看向菜单，声音变得兴奋）\n\n那你觉得哪个更适合我今天的状态呢？\n\n（她指向不同的选项）\n\n麻辣烫：香辣可口，能让人热血沸腾\n牛肉面：清淡营养，能让人内心平静\n大盘鸡：分量十足，能让人充满活力\n\n（她转向你，眼中带着信任）\n\n我相信你的判断！";
     s1_choose.options = {
         DialogueOption{"选麻辣烫吧！香辣可口，能让人热血沸腾。", "s1_after_pick", [this](){ 
@@ -1307,6 +1350,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     npc.addDialogue("s1_choose", s1_choose);
     
     DialogueNode s1_after_pick;
+    s1_after_pick.id = "s1_after_pick";
     s1_after_pick.npc_text = "（苏小萌的脸上露出了灿烂的笑容）\n\n太好了！谢谢你帮我做出选择！\n\n（她开心地跳了一下）\n\n你知道吗？这是我第一次这么快就做出决定！以前我总是在这里站很久，最后还是随便选一个。\n\n（她的表情变得有些不好意思）\n\n不过...我现在还缺一瓶咖啡因灵液。你知道的，最近学习压力很大，我需要一些提神的东西。\n\n（她看向你，眼中带着期待）\n\n你能给我一瓶吗？我会给你一些好东西作为回报的！";
     s1_after_pick.options = {
         DialogueOption{"当然可以！给你咖啡因灵液。", "s1_give", [this](){
@@ -1334,6 +1378,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     
     // 添加给予咖啡因灵液后的对话
     DialogueNode s1_give;
+    s1_give.id = "s1_give";
     s1_give.npc_text = "（苏小萌的眼中闪烁着感激的光芒）\n\n太谢谢你了！你真是太好了！\n\n（她开心地接过咖啡因灵液）\n\n这个护符是我从家里带来的，据说能对实验失败妖造成额外伤害！\n\n（她将护符递给你）\n\n还有这瓶生命药水，也送给你！\n\n（她的表情变得认真）\n\n谢谢你帮我解决了选择困难的问题，我现在感觉好多了！";
     s1_give.options = {
         DialogueOption{"不客气，能帮到你就好！", "exit", nullptr, 0, ""},
@@ -1386,6 +1431,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     
     // 添加没有咖啡因灵液的对话
     DialogueNode s1_no_elixir;
+    s1_no_elixir.id = "s1_no_elixir";
     s1_no_elixir.npc_text = "（苏小萌的眼中闪过一丝失望）\n\n啊...没关系，我理解。\n\n（她的声音变得有些沮丧）\n\n其实...其实我也可以去别的地方找找。只是...只是我觉得你人很好，想和你做朋友。\n\n（她看向你）\n\n如果你以后有咖啡因灵液的话，记得来找我哦！我会给你一些好东西的！";
     s1_no_elixir.options = {
         DialogueOption{"好的，我会记住的。", "exit", nullptr, 0, ""},
@@ -1395,6 +1441,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     
     // 添加咖啡因灵液信息对话
     DialogueNode s1_elixir_info;
+    s1_elixir_info.id = "s1_elixir_info";
     s1_elixir_info.npc_text = "（苏小萌的眼中闪过一丝希望）\n\n咖啡因灵液？\n\n（她想了想）\n\n我记得...我记得在荒废北操场有一些怪物会掉落咖啡因灵液。就是那些压力黑雾，它们身上有时候会带着这种灵液。\n\n（她的声音变得兴奋）\n\n如果你能帮我找到一瓶，我会给你一个很特别的护符！那是我从家里带来的，据说能对实验失败妖造成额外伤害！\n\n（她看向你）\n\n怎么样？要不要去试试？";
     s1_elixir_info.options = {
         DialogueOption{"好的，我去试试看。", "exit", nullptr, 0, ""},
@@ -1404,6 +1451,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     
     // 添加怪物信息对话
     DialogueNode s1_monster_info;
+    s1_monster_info.id = "s1_monster_info";
     s1_monster_info.npc_text = "（苏小萌指向北边）\n\n压力黑雾在荒废北操场，就是那个废弃的操场。\n\n（她的声音变得有些害怕）\n\n那些怪物...它们很可怕，会让人感到紧张和压力。但是如果你有足够的实力，它们会掉落咖啡因灵液。\n\n（她看向你）\n\n不过要小心，它们比一般的怪物要强一些。建议你先提升一下等级，或者找一些好装备再去挑战。\n\n（她的声音变得温柔）\n\n如果你需要帮助，可以去找林清漪，她总是很乐意帮助新人的。";
     s1_monster_info.options = {
         DialogueOption{"我明白了，谢谢你的提醒。", "exit", nullptr, 0, ""},
@@ -1413,6 +1461,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     
     // 随机闲聊建议（完成S1后偶发）
     DialogueNode s1_chat;
+    s1_chat.id = "s1_chat";
     s1_chat.npc_text = "（小声）实验楼别硬刚，先穿厚点的护甲更稳。听说陆天宇在体育馆修训练装置，你可以去帮帮他。";
     s1_chat.options = { 
         DialogueOption{"嗯，记住了。", "exit", nullptr, 0, ""},
@@ -1422,6 +1471,7 @@ void Game::initializeSuXiaomengDialogues(NPC& npc) {
     
     // 陆天宇信息
     DialogueNode lu_tianyu_info;
+    lu_tianyu_info.id = "lu_tianyu_info";
     lu_tianyu_info.npc_text = "陆天宇是体育馆的管理员，他正在修理训练装置，需要动力碎片。如果你帮他收集，他会给你很好的奖励。";
     lu_tianyu_info.options = { DialogueOption{"谢谢提醒。", "exit", nullptr, 0, ""} };
     npc.addDialogue("lu_tianyu_info", lu_tianyu_info);
