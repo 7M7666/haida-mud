@@ -158,7 +158,8 @@ bool Player::equipItem(const std::string& item_name) {
         if (eq_weapon && eq_armor && eq_weapon->quality == eq_armor->quality) {
             Item qdemo; qdemo.type = ItemType::EQUIPMENT; qdemo.quality = eq_weapon->quality;
             qdemo.name = (eq_weapon->quality==EquipmentQuality::UNDERGRAD?"本科":(eq_weapon->quality==EquipmentQuality::MASTER?"硕士":"博士"));
-            std::cout << "【套装】学霸两件套已触发（" << getColoredItemName(qdemo) << "）全属性+20%\n";
+            int bonus_percent = (eq_weapon->quality==EquipmentQuality::UNDERGRAD?10:(eq_weapon->quality==EquipmentQuality::MASTER?15:20));
+            std::cout << "【套装】学霸两件套已触发（" << getColoredItemName(qdemo) << "）全属性+" << bonus_percent << "%\n";
         }
         return true;
     }
@@ -198,14 +199,24 @@ void Player::updateAttributesFromEquipment() {
     attr().spd += equipment_.getTotalSPD();
     attr().max_hp += equipment_.getTotalHP();
 
-    // 学霸两件套：当武器与护甲为同一品质（本科/硕士/博士）时，全属性+20%
+    // 学霸两件套：当武器与护甲为同一品质时，根据品质给予不同加成
+    // 本科套装+10%，硕士套装+15%，博士套装+20%
     const Item* eq_weapon = equipment_.getEquippedItem(EquipmentSlot::WEAPON);
     const Item* eq_armor  = equipment_.getEquippedItem(EquipmentSlot::ARMOR);
     if (eq_weapon && eq_armor && eq_weapon->quality == eq_armor->quality) {
-        attr().atk = static_cast<int>(attr().atk * 1.2);
-        attr().def_ = static_cast<int>(attr().def_ * 1.2);
-        attr().spd = static_cast<int>(attr().spd * 1.2);
-        attr().max_hp = static_cast<int>(attr().max_hp * 1.2);
+        float bonus_multiplier = 1.0f;
+        if (eq_weapon->quality == EquipmentQuality::UNDERGRAD) {
+            bonus_multiplier = 1.1f; // 本科套装+10%
+        } else if (eq_weapon->quality == EquipmentQuality::MASTER) {
+            bonus_multiplier = 1.15f; // 硕士套装+15%
+        } else if (eq_weapon->quality == EquipmentQuality::DOCTOR) {
+            bonus_multiplier = 1.2f; // 博士套装+20%
+        }
+        
+        attr().atk = static_cast<int>(attr().atk * bonus_multiplier);
+        attr().def_ = static_cast<int>(attr().def_ * bonus_multiplier);
+        attr().spd = static_cast<int>(attr().spd * bonus_multiplier);
+        attr().max_hp = static_cast<int>(attr().max_hp * bonus_multiplier);
     }
     
     // 确保HP不超过最大值
