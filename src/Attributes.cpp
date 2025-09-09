@@ -1,17 +1,22 @@
-#include "Attributes.hpp"
-#include "Utilities.hpp"
-#include <sstream>
-#include <algorithm>
-#include <iostream>
+// 属性系统的实现文件
+// 角色的属性管理都在这里，包括HP、攻击力、防御力、速度等
+
+#include "Attributes.hpp"  // 属性类头文件
+#include "Utilities.hpp"   // 工具函数
+#include <sstream>         // 字符串流
+#include <algorithm>       // 算法库
+#include <iostream>        // 输入输出流
 
 namespace hx {
 
+// 增加属性点
+// 输入生命值、攻击力、防御力、速度的增量
 void Attributes::addPoints(int hp_delta, int atk_delta, int def_delta, int spd_delta) {
-    max_hp += hp_delta;
-    hp = std::min(hp, max_hp); // 确保HP不超过最大值
-    atk += atk_delta;
-    def_ += def_delta;
-    spd += spd_delta;
+    max_hp += hp_delta;                    // 增加最大生命值
+    hp = std::min(hp, max_hp);             // 确保当前HP不超过最大值
+    atk += atk_delta;                      // 增加攻击力
+    def_ += def_delta;                     // 增加防御力
+    spd += spd_delta;                      // 增加速度
 }
 
 std::string Attributes::toString() const {

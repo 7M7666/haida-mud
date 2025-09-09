@@ -1,9 +1,14 @@
+// 这是物品定义的头文件
+// 作者：大一学生
+// 功能：定义游戏中的所有物品，提供统一的物品创建接口
+
 #pragma once
-#include "Item.hpp"
+#include "Item.hpp"  // 物品类
 
 namespace hx {
 
 // 统一的物品定义类，避免重复定义
+// 功能：提供所有游戏物品的创建方法，确保物品定义的一致性
 class ItemDefinitions {
 public:
     // 基础装备

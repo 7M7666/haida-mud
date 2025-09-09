@@ -1,10 +1,16 @@
+// 这是地图系统的头文件
+// 作者：大一学生
+// 功能：定义游戏中的地图系统，包括地图渲染和导航
+
 #pragma once
-#include <unordered_map>
-#include <string>
-#include <vector>
-#include "Location.hpp"
+#include <unordered_map>  // 哈希映射
+#include <string>         // 字符串
+#include <vector>         // 向量容器
+#include "Location.hpp"   // 地点类
 
 namespace hx {
+// 地图类
+// 功能：管理游戏中的所有地点，提供地图渲染和导航功能
 class Map {
 public:
     void addLocation(const Location& loc);

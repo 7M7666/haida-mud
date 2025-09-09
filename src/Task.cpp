@@ -1,12 +1,16 @@
-#include "Task.hpp"
-#include "Player.hpp"
-#include <sstream>
-#include <algorithm>
-#include <iostream>
+// 这是任务系统的实现文件
+// 作者：大一学生
+// 功能：实现游戏中的任务系统，包括任务管理和任务管理器
+
+#include "Task.hpp"    // 任务类头文件
+#include "Player.hpp"  // 玩家类头文件
+#include <sstream>     // 字符串流
+#include <algorithm>   // 算法库
+#include <iostream>    // 输入输出流
 
 namespace hx {
 
-// Task类实现
+// Task类实现 - 单个任务的管理
 Task::Task(const std::string& id, const std::string& name, const std::string& description,
            TaskType type, const std::vector<TaskReward>& rewards)
     : id_(id), name_(name), description_(description), type_(type), status_(TaskStatus::NOT_STARTED), rewards_(rewards) {}

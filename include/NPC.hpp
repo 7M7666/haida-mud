@@ -1,13 +1,19 @@
+// 这是NPC系统的头文件
+// 作者：大一学生
+// 功能：定义游戏中的NPC系统，包括对话、商店、好感度等
+
 #pragma once
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <unordered_set>
-#include <functional>
-#include "Item.hpp"
+#include <string>         // 字符串
+#include <vector>         // 向量容器
+#include <unordered_map>  // 哈希映射
+#include <unordered_set>  // 哈希集合
+#include <functional>     // 函数对象
+#include "Item.hpp"       // 物品类
 
 namespace hx {
 
+// 对话选项结构体
+// 功能：定义对话中的一个选项
 struct DialogueOption {
     std::string text;
     std::string next_dialogue_id;

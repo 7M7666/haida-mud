@@ -1,31 +1,42 @@
+// 玩家类的头文件
+// 定义玩家类，包括属性、装备、背包、任务等功能
+
 #pragma once
-#include "Entity.hpp"
-#include "Inventory.hpp"
-#include "Item.hpp"
-#include <vector>
-#include <memory>
-#include <string>
-#include <unordered_map>
+#include "Entity.hpp"      // 实体基类
+#include "Inventory.hpp"   // 背包系统
+#include "Item.hpp"        // 物品系统
+#include <vector>          // 向量容器
+#include <memory>          // 智能指针
+#include <string>          // 字符串
+#include <unordered_map>   // 哈希映射
 
 namespace hx {
-struct SimpleItem { std::string id; std::string name; int count; };
-
-// 任务状态
-enum class QuestStatus {
-    NOT_STARTED,
-    IN_PROGRESS,
-    COMPLETED,
-    FAILED
+// 简单物品结构体
+// 用来存储物品的基本信息，简化版本
+struct SimpleItem { 
+    std::string id;    // 物品ID
+    std::string name;  // 物品名称
+    int count;         // 物品数量
 };
 
-// 任务信息
+// 任务状态枚举
+// 定义任务的不同状态
+enum class QuestStatus {
+    NOT_STARTED,  // 未开始
+    IN_PROGRESS,  // 进行中
+    COMPLETED,    // 已完成
+    FAILED        // 失败
+};
+
+// 任务信息结构体
+// 存储任务的详细信息
 struct QuestInfo {
-    std::string id;
-    std::string name;
-    std::string description;
-    QuestStatus status;
-    std::vector<std::string> objectives;
-    std::vector<std::string> rewards;
+    std::string id;                           // 任务ID
+    std::string name;                         // 任务名称
+    std::string description;                  // 任务描述
+    QuestStatus status;                       // 任务状态
+    std::vector<std::string> objectives;      // 任务目标列表
+    std::vector<std::string> rewards;         // 任务奖励列表
 };
 
 class Player : public Entity {

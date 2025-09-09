@@ -1,10 +1,15 @@
-#include "SaveLoad.hpp"
-#include <fstream>
-#include <iostream>
+// 这是存档读档系统的实现文件
+// 作者：大一学生
+// 功能：实现游戏的存档和读档功能，保存和恢复游戏状态
+
+#include "SaveLoad.hpp"  // 存档读档头文件
+#include <fstream>        // 文件流
+#include <iostream>       // 输入输出流
 
 namespace hx {
 
 // ---------------- 工具函数 ----------------
+// 用于文件读写的辅助函数
 static void writeString(std::ofstream& out, const std::string& s){ 
     size_t n = s.size(); 
     out.write((char*)&n, sizeof(n)); 

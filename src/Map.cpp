@@ -1,16 +1,22 @@
-#include "Map.hpp"
-#include <iostream>
-#include <algorithm>
-#include <sstream>
-#include <map>
-#include <windows.h> // Windows控制台颜色支持
+// 这是地图系统的实现文件
+// 作者：大一学生
+// 功能：实现游戏中的地图渲染和导航系统
+
+#include "Map.hpp"        // 地图类头文件
+#include <iostream>        // 输入输出流
+#include <algorithm>       // 算法库
+#include <sstream>         // 字符串流
+#include <map>             // 映射容器
+#include <windows.h>       // Windows控制台颜色支持
 
 namespace hx {
 
 // Windows控制台颜色设置函数
+// 参数：color(颜色代码)
+// 功能：设置控制台文字的颜色，用于美化地图显示
 void setConsoleColor(int color) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, color);
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // 获取控制台句柄
+    SetConsoleTextAttribute(hConsole, color);           // 设置文字属性
 }
 
 void Map::addLocation(const Location& loc){ data_[loc.id]=loc; }

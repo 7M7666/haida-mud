@@ -1,8 +1,15 @@
-#include "NPC.hpp"
-#include <algorithm>
+// 这是NPC系统的实现文件
+// 作者：大一学生
+// 功能：实现游戏中的NPC系统，包括对话、商店、好感度等
+
+#include "NPC.hpp"    // NPC类头文件
+#include <algorithm>   // 算法库
 
 namespace hx {
 
+// NPC类的构造函数
+// 参数：name(NPC名称), description(NPC描述)
+// 功能：初始化NPC的基本信息
 NPC::NPC(std::string name, std::string description) 
     : name_(std::move(name)), description_(std::move(description)) {}
 

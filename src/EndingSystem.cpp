@@ -1,11 +1,18 @@
-#include "Player.hpp"
-#include <iostream>
-#include <string>
+// 这是结局系统的实现文件
+// 作者：大一学生
+// 功能：实现游戏的结局系统，根据玩家的表现计算不同的结局
+
+#include "Player.hpp"  // 玩家类头文件
+#include <iostream>    // 输入输出流
+#include <string>      // 字符串
 
 namespace hx {
 
+// 计算游戏结局
+// 返回值：根据玩家表现计算的结局类型
+// 功能：根据玩家的等级、好感度、装备等计算最终结局
 Player::Ending Player::calculateEnding() const {
-    // 检查文心潭失败次数
+    // 检查文心潭失败次数 - 如果失败太多次就是失败结局
     if (wenxin_failures_ >= 3) {
         return Ending::FAILURE;
     }

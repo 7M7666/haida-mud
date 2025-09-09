@@ -1,11 +1,17 @@
+// 这是敌人类的头文件
+// 作者：大一学生
+// 功能：定义游戏中的敌人类，包括怪物属性和特殊技能
+
 #pragma once
-#include "Entity.hpp"
-#include "Attributes.hpp"
-#include <vector>
-#include <string>
-#include <functional>
+#include "Entity.hpp"      // 实体基类
+#include "Attributes.hpp"  // 属性系统
+#include <vector>          // 向量容器
+#include <string>          // 字符串
+#include <functional>      // 函数对象
 
 namespace hx {
+// 敌人类
+// 功能：继承自Entity，表示游戏中的敌人和怪物
 class Enemy : public Entity {
 public:
     Enemy(std::string name, Attributes attr, int coin_reward, int xp_reward);

@@ -1,3 +1,8 @@
-#include "Dialogue.hpp"
+// 这是对话系统的实现文件
+// 作者：大一学生
+// 功能：实现游戏中的对话系统（目前是占位符）
 
-// (Placeholder) – dialogues will be defined in data files in the future.
+#include "Dialogue.hpp"  // 对话系统头文件
+
+// (占位符) - 对话内容将在未来的数据文件中定义。
+// 目前对话系统的主要实现在Game.cpp和GameWorld.cpp中。

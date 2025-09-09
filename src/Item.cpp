@@ -1,21 +1,27 @@
-#include "Item.hpp"
-#include <sstream>
-#include <algorithm>
+// 物品系统的实现文件
+// 游戏中的物品系统，包括消耗品、装备、任务物品等
+
+#include "Item.hpp"    // 物品类头文件
+#include <sstream>     // 字符串流
+#include <algorithm>   // 算法库
 
 namespace hx {
 
-// 静态方法实现
+// 静态方法实现 - 创建各种类型的物品
+// 创建消耗品
+// 输入物品ID、名称、描述、恢复量、价格
+// 返回一个可以使用的消耗品，比如药水、食物等
 Item Item::createConsumable(const std::string& id, const std::string& name, 
                            const std::string& description, int heal, int price) {
-    Item item;
-    item.id = id;
-    item.name = name;
-    item.description = description;
-    item.type = ItemType::CONSUMABLE;
-    item.heal_amount = heal;
-    item.price = price;
-    item.use_message = "使用了 " + name + "，恢复了 " + std::to_string(heal) + " 点生命值。";
-    return item;
+    Item item;                                    // 创建物品对象
+    item.id = id;                                 // 设置物品ID
+    item.name = name;                             // 设置物品名称
+    item.description = description;               // 设置物品描述
+    item.type = ItemType::CONSUMABLE;             // 设置为消耗品类型
+    item.heal_amount = heal;                      // 设置恢复量
+    item.price = price;                           // 设置价格
+    item.use_message = "使用了 " + name + "，恢复了 " + std::to_string(heal) + " 点生命值。"; // 设置使用消息
+    return item;                                  // 返回创建好的物品
 }
 
 Item Item::createEquipment(const std::string& id, const std::string& name,

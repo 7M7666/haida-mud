@@ -1,27 +1,57 @@
+// 游戏类的主头文件
+// 定义游戏的主要类，包含游戏的核心逻辑和状态管理
+
 #pragma once
-#include <string>
-#include "GameState.hpp"
-#include "Map.hpp"
-#include "Player.hpp"
-#include "Quest.hpp"
-#include "Combat.hpp"
-#include "Command.hpp"
+#include <string>        // 字符串库
+#include "GameState.hpp" // 游戏状态
+#include "Map.hpp"       // 地图系统
+#include "Player.hpp"    // 玩家类
+#include "Quest.hpp"     // 任务系统
+#include "Combat.hpp"    // 战斗系统
+#include "Command.hpp"   // 命令系统
 
 namespace hx {
+// 游戏主类
+// 管理整个游戏的运行，包括地图、玩家、战斗、任务等
 class Game {
 public:
+    // 构造函数
+    // 初始化游戏，设置世界和战斗系统
     Game();
+    
+    // 运行游戏主循环
+    // 开始游戏，处理玩家输入和游戏逻辑
     void run();
+    
+    // 获取游戏状态
+    // 返回值：游戏状态的引用
+    // 功能：提供对游戏状态的访问
     GameState& state() { return state_; }
+    
+    // 获取战斗系统
+    // 返回值：战斗系统的引用
+    // 功能：提供对战斗系统的访问
     CombatSystem& combat() { return combat_; }
     
     // NPC对话初始化（用于测试和修复）
-    void initializeNPCDialogues(); // 为现有NPC添加对话内容
+    // 功能：为现有NPC添加对话内容，确保对话系统正常工作
+    void initializeNPCDialogues();
 private:
+    // 游戏状态对象
+    // 功能：存储游戏的所有状态信息，包括玩家、地图、任务等
     GameState state_{};
+    
+    // 战斗系统对象
+    // 功能：处理所有战斗相关的逻辑
     CombatSystem combat_{};
+    
+    // 命令路由器对象
+    // 功能：处理玩家的输入命令
     CommandRouter router_{};
-    bool in_teaching_detail_ = false; // 标记是否在教学区详细地图中
+    
+    // 教学区详细地图标记
+    // 功能：标记玩家是否在教学区的详细地图中
+    bool in_teaching_detail_ = false;
     
     void setupWorld();
     void createLocations();

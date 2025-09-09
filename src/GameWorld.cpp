@@ -1,31 +1,37 @@
-#include "Game.hpp"
-#include "Location.hpp"
-#include "NPC.hpp"
-#include "Item.hpp"
-#include "ItemDefinitions.hpp"
-#include "Enemy.hpp"
-#include "Attributes.hpp"
-#include <iostream>
+// 这是游戏世界的实现文件
+// 作者：大一学生
+// 功能：实现游戏世界的创建和初始化，包括地点、NPC、物品、任务等
+
+#include "Game.hpp"            // 游戏类头文件
+#include "Location.hpp"        // 地点类头文件
+#include "NPC.hpp"             // NPC类头文件
+#include "Item.hpp"            // 物品类头文件
+#include "ItemDefinitions.hpp" // 物品定义头文件
+#include "Enemy.hpp"           // 敌人类头文件
+#include "Attributes.hpp"      // 属性类头文件
+#include <iostream>            // 输入输出流
 
 namespace hx {
 
+// 设置游戏世界
+// 功能：初始化整个游戏世界，创建所有游戏元素
 void Game::setupWorld() {
-    // 创建地点
+    // 创建地点 - 设置游戏中的所有地点
     createLocations();
     
-    // 创建NPC
+    // 创建NPC - 设置游戏中的所有NPC
     createNPCs();
     
-    // 初始化NPC对话
+    // 初始化NPC对话 - 为NPC添加对话内容
     initializeNPCDialogues();
     
-    // 创建物品
+    // 创建物品 - 设置游戏中的所有物品
     createItems();
     
-    // 创建任务
+    // 创建任务 - 设置游戏中的所有任务
     createTasks();
     
-    // 初始化怪物刷新系统
+    // 初始化怪物刷新系统 - 设置怪物的刷新机制
     initializeMonsterSpawns();
     
     // 设置初始位置 - 海大图书馆古籍区

@@ -1,13 +1,18 @@
+// 这是任务系统的头文件
+// 作者：大一学生
+// 功能：定义游戏中的任务系统，包括任务和任务管理器
+
 #pragma once
-#include <string>
-#include <vector>
+#include <string>  // 字符串
+#include <vector>  // 向量容器
 
 namespace hx {
 
 // 前向声明
 class Player;
 
-// 任务状态
+// 任务状态枚举
+// 功能：定义任务的不同状态
 enum class TaskStatus {
     NOT_STARTED,    // 未接取
     IN_PROGRESS,    // 进行中

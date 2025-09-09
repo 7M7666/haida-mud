@@ -1,50 +1,79 @@
-#include "Game.hpp"
-#include "SaveLoad.hpp"
-#include "ItemDefinitions.hpp"
-#include <iostream>
-#include <cstdlib>
-#include <algorithm>
-#include <limits>
-#include <sstream>
-#include <numeric>
-#include <set>
+// 游戏的主要文件，写游戏逻辑的地方
+// 海大修仙秘这个游戏的所有主要功能都在这里
+
+#include "Game.hpp"        // 游戏类的头文件
+#include "SaveLoad.hpp"     // 存档读档功能
+#include "ItemDefinitions.hpp"  // 物品定义
+#include <iostream>         // 输入输出流
+#include <cstdlib>          // 标准库函数
+#include <algorithm>        // 算法库
+#include <limits>           // 数值限制
+#include <sstream>          // 字符串流
+#include <numeric>          // 数值算法
+#include <set>              // 集合容器
 
 namespace hx {
-static Location mk(const std::string& id,const std::string& name,const std::string& desc,int x,int y){ Location L; L.id=id; L.name=name; L.desc=desc; L.coord={x,y}; return L; }
+// 这个函数用来快速创建一个地点
+// 输入地点信息，返回一个Location对象
+static Location mk(const std::string& id,const std::string& name,const std::string& desc,int x,int y){ 
+    Location L; 
+    L.id=id; 
+    L.name=name; 
+    L.desc=desc; 
+    L.coord={x,y}; 
+    return L; 
+}
 
-Game::Game(){ setupWorld(); combat_.setGameState(&state_); }
-void Game::printBanner() const{ std::cout<<"\n=== 海大修仙秘：文心潭秘录 ===\n"; std::cout<<"输入 help 查看指令。\n"; }
+// 游戏开始的时候会调用这个函数
+// 用来初始化游戏世界和战斗系统
+Game::Game(){ 
+    setupWorld();                    // 设置游戏世界
+    combat_.setGameState(&state_);   // 给战斗系统设置游戏状态
+}
 
-// setupWorld() function is now implemented in GameWorld.cpp
+// 显示游戏标题和帮助信息
+void Game::printBanner() const{ 
+    std::cout<<"\n=== 海大修仙秘：文心潭秘录 ===\n"; 
+    std::cout<<"输入 help 查看指令。\n"; 
+}
 
+// 世界设置函数现在在GameWorld.cpp中实现
+
+// 查看当前地点的信息
+// 会显示NPC、敌人、地图等所有东西
 void Game::look() const{
+    // 找到当前所在的位置
     const auto* loc = state_.map.get(state_.current_loc);
+    // 如果找不到位置就报错
     if(!loc){ std::cout<<"未知地点。\n"; return; }
     
-    // 第四章之后不显示位置信息
+    // 第四章之后就不显示位置信息了
     if (state_.chapter4_shown) {
         return;
     }
     
-    // ===== 第一部分：当前位置标题 + 简介 =====
+    // 显示地点名称和描述
     std::cout << "\n📍 【" << loc->name << "】\n";
     std::cout << loc->desc << "\n";
     
-    // ===== 第二部分：场景信息 =====
     // 显示NPC
     if(!loc->npcs.empty()){ 
         std::cout << "npc：\n";
+        // 把每个NPC的名字都显示出来
         for(const auto& npc:loc->npcs) {
             std::cout << "   • " << npc.name() << "\n";
         }
     }
     
-    // 显示敌人信息
+    // 显示敌人
     if(!loc->enemies.empty()){ 
         std::cout << "敌人：\n";
+        // 把每个敌人都显示出来
         for(auto &en:loc->enemies) {
+            // 看看这个敌人能不能打
             bool can_fight = canSpawnMonster(state_.current_loc, en.name());
             std::cout << "   • " << formatMonsterName(en);
+            // 显示能不能挑战
             if (!can_fight) {
                 std::cout << "（不可挑战）";
             } else {
@@ -54,32 +83,38 @@ void Game::look() const{
         }
     }
     
-    // ===== 第三部分：操作提示 =====
+    // 显示可以做什么操作
     showEnhancedOperations();
     
-    // ===== 第四部分：地图 =====
+    // 显示地图
     std::cout << "\n🗺️ 地图导航\n";
     
-    // 根据地图状态显示不同的地图
+    // 根据位置显示不同的地图
     if(state_.in_teaching_detail) {
+        // 在教学区就显示教学区地图
         renderTeachingDetailMap();
     } else {
+        // 不在教学区就显示主地图
         renderMainMap();
     }
 }
 
+// 显示主地图
 void Game::renderMainMap() const {
     std::cout << state_.map.renderMainMap(state_.current_loc);
 }
 
+// 显示教学区地图
 void Game::renderTeachingDetailMap() const {
     std::cout << state_.map.renderTeachingDetailMap(state_.current_loc);
 }
 
+// 显示增强版主地图
 void Game::renderEnhancedMainMap() const {
     std::cout << state_.map.renderEnhancedMainMap(state_.current_loc);
 }
 
+// 显示增强版教学区地图
 void Game::renderEnhancedTeachingDetailMap() const {
     std::cout << state_.map.renderEnhancedTeachingDetailMap(state_.current_loc);
 }
@@ -1921,7 +1956,7 @@ void Game::run(){
             std::cout<<" - 命中与闪避受 SPD 影响；专注=必中；鼓舞=ATK+15%\n";
             std::cout<<" - 敌人可能施加‘迟缓/紧张’，留意提示\n";
             std::cout<<" - 装备特效：演讲之词(开场鼓舞)、护目镜(额外闪避)、被子(回合恢复)\n";
-            std::cout<<" - 学霸两件套：武器与护甲同品质 → 全属性×1.2\n";
+            std::cout<<" - 学霸两件套：武器与护甲同品质 → 本科套装+10%，硕士套装+15%，博士套装+20%\n";
         }
         else if(line=="help shop"){ 
             std::cout<<"\n"<<std::string(50,'=')<<"\n";

@@ -1,8 +1,12 @@
-#include "ItemDefinitions.hpp"
+// 这是物品定义的实现文件
+// 作者：大一学生
+// 功能：定义游戏中的所有物品，包括装备、消耗品、任务物品等
+
+#include "ItemDefinitions.hpp"  // 物品定义头文件
 
 namespace hx {
 
-// 基础装备
+// 基础装备 - 游戏中的基础装备物品
 Item ItemDefinitions::createStudentUniform() {
     Item item = Item::createEquipment("student_uniform", "普通学子服", 
         "海大计算机学院的标准校服，虽然普通但很实用。", 

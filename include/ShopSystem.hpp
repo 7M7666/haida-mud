@@ -1,13 +1,18 @@
+// 这是商店系统的头文件
+// 作者：大一学生
+// 功能：定义游戏中的商店系统，包括物品池管理和商店功能
+
 #pragma once
-#include "Item.hpp"
-#include "NPC.hpp"
-#include <vector>
-#include <random>
-#include <unordered_map>
+#include "Item.hpp"        // 物品类
+#include "NPC.hpp"         // NPC类
+#include <vector>          // 向量容器
+#include <random>          // 随机数生成
+#include <unordered_map>   // 哈希映射
 
 namespace hx {
 
 // 商店物品池中的物品定义
+// 功能：定义商店中可以出售的物品
 struct ShopItemPool {
     std::string id;
     std::string name;

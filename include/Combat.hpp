@@ -1,32 +1,37 @@
+// 战斗系统的头文件
+// 定义战斗系统，包括技能、伤害计算、战斗逻辑等
+
 #pragma once
-#include "Player.hpp"
-#include "Enemy.hpp"
-#include <random>
-#include <string>
-#include <vector>
-#include <functional>
-#include <unordered_map>
+#include "Player.hpp"     // 玩家类
+#include "Enemy.hpp"      // 敌人类
+#include <random>         // 随机数生成
+#include <string>         // 字符串
+#include <vector>         // 向量容器
+#include <functional>     // 函数对象
+#include <unordered_map>  // 哈希映射
 
 namespace hx {
 
-// 战斗动作类型
+// 战斗动作类型枚举
+// 定义玩家在战斗中可以执行的动作
 enum class CombatAction {
     ATTACK,     // 普通攻击
-    SKILL,      // 技能
+    SKILL,      // 使用技能
     INVENTORY,  // 使用物品
     DEFEND,     // 防御
     TALK,       // 交谈
     FLEE        // 逃跑
 };
 
-// 技能信息
+// 技能信息结构体
+// 存储技能的所有信息
 struct Skill {
-    std::string name;
-    std::string description;
-    int mp_cost;
-    int cooldown;
-    int current_cooldown;
-    std::function<void(Player&, Enemy&, std::string&)> effect;
+    std::string name;                                                    // 技能名称
+    std::string description;                                             // 技能描述
+    int mp_cost;                                                         // 魔法消耗
+    int cooldown;                                                        // 冷却时间
+    int current_cooldown;                                                // 当前冷却时间
+    std::function<void(Player&, Enemy&, std::string&)> effect;          // 技能效果函数
 };
 
 class CombatSystem {

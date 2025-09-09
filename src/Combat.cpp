@@ -1,32 +1,49 @@
-#include "Combat.hpp"
-#include "GameState.hpp"
-#include <sstream>
-#include <algorithm>
-#include <cmath>
-#include <iostream>
+// 战斗系统的实现文件
+// 游戏中的战斗逻辑都在这里，包括攻击、技能、状态效果等
+
+#include "Combat.hpp"    // 战斗系统头文件
+#include "GameState.hpp"  // 游戏状态头文件
+#include <sstream>        // 字符串流
+#include <algorithm>      // 算法库
+#include <cmath>          // 数学函数
+#include <iostream>       // 输入输出流
 
 namespace hx {
+// 限制整数在指定范围内的辅助函数
+// 参数：v(值), lo(最小值), hi(最大值)
 static int clamp(int v, int lo, int hi) { return std::max(lo, std::min(v, hi)); }
+// 限制浮点数在指定范围内的辅助函数
+// 参数：v(值), lo(最小值), hi(最大值)
 static double clamp(double v, double lo, double hi) { return std::max(lo, std::min(v, hi)); }
 
+// 创建战斗系统的时候会调用这个函数
+// 输入随机数种子，然后初始化战斗系统和技能
 CombatSystem::CombatSystem(unsigned seed) : rng_(seed) {
-    initializeSkills();
+    initializeSkills();  // 初始化所有技能
 }
 
+// 生成1-100的随机数
+// 用来做各种概率判定
 int CombatSystem::rollPercent() { 
     std::uniform_int_distribution<int> d(1,100); 
     return d(rng_); 
 }
 
+// 生成0.9-1.1的随机数
+// 用来让伤害有随机波动
 double CombatSystem::rollRandomFactor() {
     std::uniform_real_distribution<double> d(0.9, 1.1);
     return d(rng_);
 }
 
+// 计算攻击能不能命中
+// 输入攻击者和防御者的速度
+// 根据速度差计算命中概率，返回true或false
 bool CombatSystem::rollHit(int attacker_spd, int defender_spd) {
-    int spd_diff = defender_spd - attacker_spd;
+    int spd_diff = defender_spd - attacker_spd;  // 计算速度差
+    // 速度差越大，命中率越低，但最低15%，最高95%
     int hit_chance = clamp(100 - (spd_diff * 2), 15, 95);
-    return rollPercent() <= hit_chance;
+    return rollPercent() <= hit_chance;  // 随机判定是否命中
 }
 
 // 主要战斗函数

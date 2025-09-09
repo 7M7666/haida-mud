@@ -1,51 +1,71 @@
-#include "Player.hpp"
-#include "Inventory.hpp"
-#include <sstream>
-#include <algorithm>
-#include <iostream>
+// 玩家类的实现文件
+// 玩家的所有功能都在这里，包括属性、装备、背包等
+
+#include "Player.hpp"    // 玩家类头文件
+#include "Inventory.hpp" // 背包系统
+#include <sstream>       // 字符串流
+#include <algorithm>     // 算法库
+#include <iostream>      // 输入输出流
 
 namespace hx {
 
 // 静态常量定义
+// 复活符的物品ID，用于复活功能
 const std::string Player::REVIVAL_SCROLL_ID = "revival_scroll";
+// 图书馆的地点ID，用于传送功能
 const std::string Player::LIBRARY_LOCATION_ID = "library";
 
+// 创建玩家的时候会调用这个函数
+// 输入玩家名字，然后初始化玩家和背包
 Player::Player(std::string name) : Entity(name, Attributes{}) {
+    // 创建一个新的背包对象
     inventory_ = std::make_unique<Inventory>();
 }
 
+// 增加经验值
+// 输入要增加的经验值数量，然后检查能不能升级
 void Player::addXP(int amount) {
-    xp_ += amount;
-    checkLevelUp();
+    xp_ += amount;        // 增加经验值
+    checkLevelUp();       // 检查是否达到升级条件
 }
 
+// 增加金币
+// 输入要增加的金币数量
 void Player::addCoins(int amount) {
     coins_ += amount;
 }
 
+// 花费金币
+// 输入要花费的金币数量
+// 如果金币够就扣掉，返回true；不够就返回false
 bool Player::spendCoins(int amount) {
+    // 检查金币是否足够
     if (coins_ >= amount) {
-        coins_ -= amount;
-        return true;
+        coins_ -= amount;  // 扣除金币
+        return true;       // 返回成功
     }
-    return false;
+    return false;          // 金币不足，返回失败
 }
 
-// 装备系统
+// 装备物品
+// 输入物品名称（可以只输入一部分）
+// 如果装备成功返回true，失败返回false
 bool Player::equipItem(const std::string& item_name) {
-    // 从背包中查找匹配的物品
+    // 从背包里拿出所有物品
     std::vector<Item> items = inventory_->list();
-    Item* found_item = nullptr;
-    std::string found_id;
+    Item* found_item = nullptr;  // 找到的物品
+    std::string found_id;        // 找到的物品ID
     
-    // 查找匹配的物品（支持部分匹配）
+    // 在背包里找匹配的物品
     for (const auto& item : items) {
+        // 看看物品名称是不是匹配
         if (item.name.find(item_name) != std::string::npos || 
             item_name.find(item.name) != std::string::npos ||
             item.id == item_name) {
+            // 找到了就保存起来
             found_item = const_cast<Item*>(&item);
             found_id = item.id;
-            break;
+            break;  // 找到了就退出
         }
     }
     

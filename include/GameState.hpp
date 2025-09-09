@@ -1,13 +1,19 @@
+// 这是游戏状态的头文件
+// 作者：大一学生
+// 功能：定义游戏的状态结构，包含所有游戏数据
+
 #pragma once
-#include "Player.hpp"
-#include "Map.hpp"
-#include "Quest.hpp"
-#include "Task.hpp"
-#include "ShopSystem.hpp"
-#include <unordered_map>
-#include <unordered_set>
+#include "Player.hpp"     // 玩家类
+#include "Map.hpp"        // 地图类
+#include "Quest.hpp"      // 任务类
+#include "Task.hpp"       // 任务管理器
+#include "ShopSystem.hpp" // 商店系统
+#include <unordered_map>  // 哈希映射
+#include <unordered_set>  // 哈希集合
 
 namespace hx { 
+// 游戏状态结构体
+// 功能：存储游戏的所有状态信息，包括玩家、地图、任务等
 struct GameState { 
     std::string current_loc{"library"}; // 初始位置在图书馆
     bool in_teaching_detail = false; // 是否在教学区详细地图中

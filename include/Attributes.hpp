@@ -1,14 +1,19 @@
+// 这是属性系统的头文件
+// 作者：大一学生
+// 功能：定义角色的属性系统，包括基础属性和状态效果
+
 #pragma once
-#include <cstdint>
-#include <string>
-#include <vector>
-#include <unordered_map>
+#include <cstdint>        // 整数类型
+#include <string>         // 字符串
+#include <vector>         // 向量容器
+#include <unordered_map>  // 哈希映射
 
 namespace hx {
 
 // 状态效果枚举
+// 功能：定义游戏中所有可能的状态效果
 enum class StatusEffect {
-    NONE = 0,
+    NONE = 0,     // 无状态
     TENSION,      // 紧张：ATK+20%, DEF-10%
     INSPIRATION,  // 鼓舞：ATK+15%, SPD+10%
     SLOW,         // 迟缓：SPD-20%

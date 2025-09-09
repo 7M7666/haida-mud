@@ -1,17 +1,22 @@
+// 这是物品系统的头文件
+// 作者：大一学生
+// 功能：定义游戏中的物品系统，包括装备、消耗品、任务物品等
+
 #pragma once
-#include <string>
-#include <cstdint>
-#include <vector>
-#include <unordered_map>
+#include <string>         // 字符串
+#include <cstdint>        // 整数类型
+#include <vector>         // 向量容器
+#include <unordered_map>  // 哈希映射
 
 namespace hx {
 
-// 装备槽位类型
+// 装备槽位类型枚举
+// 功能：定义角色可以装备物品的槽位
 enum class EquipmentSlot {
-    WEAPON,     // 武器
-    ARMOR,      // 护甲
-    ACCESSORY1, // 饰品1
-    ACCESSORY2  // 饰品2
+    WEAPON,     // 武器槽位
+    ARMOR,      // 护甲槽位
+    ACCESSORY1, // 饰品1槽位
+    ACCESSORY2  // 饰品2槽位
 };
 
 // 物品类型

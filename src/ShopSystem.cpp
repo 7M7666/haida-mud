@@ -1,14 +1,20 @@
-#include "ShopSystem.hpp"
-#include "ItemDefinitions.hpp"
-#include <iostream>
-#include <algorithm>
-#include <set>
+// 这是商店系统的实现文件
+// 作者：大一学生
+// 功能：实现游戏中的商店系统，包括物品池管理和商店功能
+
+#include "ShopSystem.hpp"    // 商店系统头文件
+#include "ItemDefinitions.hpp"  // 物品定义头文件
+#include <iostream>            // 输入输出流
+#include <algorithm>           // 算法库
+#include <set>                 // 集合容器
 
 namespace hx {
 
+// 商店系统的构造函数
+// 功能：初始化商店系统，设置物品池和随机数生成器
 ShopSystem::ShopSystem() 
-    : revival_scroll_purchases_(0), gen_(rd_()) {
-    initializeItemPool();
+    : revival_scroll_purchases_(0), gen_(rd_()) {  // 初始化复活符购买次数和随机数生成器
+    initializeItemPool();  // 初始化物品池
 }
 
 void ShopSystem::initializeItemPool() {
