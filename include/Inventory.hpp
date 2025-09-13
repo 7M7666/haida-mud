@@ -1,16 +1,12 @@
-// 这是背包系统的头文件
-// 作者：大一学生
-// 功能：定义玩家的背包系统，管理物品的存储和数量
-
+// 背包系统
 #pragma once
-#include <unordered_map>  // 哈希映射
-#include <string>         // 字符串
-#include <vector>         // 向量容器
-#include "Item.hpp"       // 物品类
+#include <unordered_map>
+#include <string>
+#include <vector>
+#include "Item.hpp"
 
 namespace hx {
-// 背包类
-// 功能：管理玩家的物品存储，包括添加、删除、查询等功能
+
 class Inventory {
 public:
     void add(const Item& item, int qty = 1);

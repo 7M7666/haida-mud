@@ -9,42 +9,33 @@
 
 namespace hx {
 
-// 静态常量定义
-// 复活符的物品ID，用于复活功能
+// 静态常量
 const std::string Player::REVIVAL_SCROLL_ID = "revival_scroll";
-// 图书馆的地点ID，用于传送功能
 const std::string Player::LIBRARY_LOCATION_ID = "library";
 
-// 创建玩家的时候会调用这个函数
-// 输入玩家名字，然后初始化玩家和背包
+// 构造函数
 Player::Player(std::string name) : Entity(name, Attributes{}) {
-    // 创建一个新的背包对象
     inventory_ = std::make_unique<Inventory>();
 }
 
 // 增加经验值
-// 输入要增加的经验值数量，然后检查能不能升级
 void Player::addXP(int amount) {
-    xp_ += amount;        // 增加经验值
-    checkLevelUp();       // 检查是否达到升级条件
+    xp_ += amount;
+    checkLevelUp();
 }
 
 // 增加金币
-// 输入要增加的金币数量
 void Player::addCoins(int amount) {
     coins_ += amount;
 }
 
 // 花费金币
-// 输入要花费的金币数量
-// 如果金币够就扣掉，返回true；不够就返回false
 bool Player::spendCoins(int amount) {
-    // 检查金币是否足够
     if (coins_ >= amount) {
-        coins_ -= amount;  // 扣除金币
-        return true;       // 返回成功
+        coins_ -= amount;
+        return true;
     }
-    return false;          // 金币不足，返回失败
+    return false;
 }
 
 // 装备物品

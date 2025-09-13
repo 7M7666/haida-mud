@@ -12,24 +12,19 @@
 
 namespace hx {
 // 简单物品结构体
-// 用来存储物品的基本信息，简化版本
 struct SimpleItem { 
-    std::string id;    // 物品ID
-    std::string name;  // 物品名称
-    int count;         // 物品数量
+    std::string id;
+    std::string name;
+    int count;
 };
 
-// 任务状态枚举
-// 定义任务的不同状态
 enum class QuestStatus {
-    NOT_STARTED,  // 未开始
-    IN_PROGRESS,  // 进行中
-    COMPLETED,    // 已完成
-    FAILED        // 失败
+    NOT_STARTED,
+    IN_PROGRESS,
+    COMPLETED,
+    FAILED
 };
 
-// 任务信息结构体
-// 存储任务的详细信息
 struct QuestInfo {
     std::string id;                           // 任务ID
     std::string name;                         // 任务名称
@@ -102,7 +97,6 @@ public:
     // 物品使用
     bool useItem(const std::string& item_id);
     
-    // setters/getters used by SaveLoad
     const std::string& getName() const { return name_; }
     void setName(const std::string& n) { name_ = n; }
     void setAttr(const Attributes& a) { attr_ = a; }
@@ -112,14 +106,11 @@ public:
     std::vector<SimpleItem> simpleInventory() const;
     void setInventory(const std::vector<SimpleItem>& items);
     
-    // 好感度保存/加载
     void setNPCFavors(const std::unordered_map<std::string, int>& favors) { npc_favors_ = favors; }
     
-    // 任务保存/加载
     void setQuests(const std::unordered_map<std::string, QuestInfo>& quests) { quests_ = quests; }
     std::unordered_map<std::string, QuestInfo> getQuests() const { return quests_; }
     
-    // 文心潭失败次数保存/加载
     void setWenxinFailures(int failures) { wenxin_failures_ = failures; }
 
 private:
@@ -129,16 +120,10 @@ private:
     std::unique_ptr<Inventory> inventory_;
     Equipment equipment_;
     
-    // 好感度系统
     std::unordered_map<std::string, int> npc_favors_;
-    
-    // 任务系统
     std::unordered_map<std::string, QuestInfo> quests_;
-    
-    // 文心潭失败计数
     int wenxin_failures_{0};
     
-    // 复活符ID
     static const std::string REVIVAL_SCROLL_ID;
     static const std::string LIBRARY_LOCATION_ID;
 };

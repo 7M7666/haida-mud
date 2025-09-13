@@ -13,28 +13,26 @@
 #include <set>              // 集合容器
 
 namespace hx {
-// 这个函数用来快速创建一个地点
-// 输入地点信息，返回一个Location对象
-static Location mk(const std::string& id,const std::string& name,const std::string& desc,int x,int y){ 
-    Location L; 
-    L.id=id; 
-    L.name=name; 
-    L.desc=desc; 
-    L.coord={x,y}; 
-    return L; 
+// 快速创建地点的辅助函数
+static Location mk(const std::string& id, const std::string& name, const std::string& desc, int x, int y) { 
+    Location loc; 
+    loc.id = id; 
+    loc.name = name; 
+    loc.desc = desc; 
+    loc.coord = {x, y}; 
+    return loc; 
 }
 
-// 游戏开始的时候会调用这个函数
-// 用来初始化游戏世界和战斗系统
-Game::Game(){ 
-    setupWorld();                    // 设置游戏世界
-    combat_.setGameState(&state_);   // 给战斗系统设置游戏状态
+// 构造函数
+Game::Game() { 
+    setupWorld();
+    combat_.setGameState(&state_);
 }
 
-// 显示游戏标题和帮助信息
-void Game::printBanner() const{ 
-    std::cout<<"\n=== 海大修仙秘：文心潭秘录 ===\n"; 
-    std::cout<<"输入 help 查看指令。\n"; 
+// 显示游戏标题
+void Game::printBanner() const { 
+    std::cout << "\n=== 海大修仙秘：文心潭秘录 ===\n"; 
+    std::cout << "输入 help 查看指令。\n"; 
 }
 
 // 世界设置函数现在在GameWorld.cpp中实现

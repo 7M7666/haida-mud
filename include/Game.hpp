@@ -23,34 +23,15 @@ public:
     // 开始游戏，处理玩家输入和游戏逻辑
     void run();
     
-    // 获取游戏状态
-    // 返回值：游戏状态的引用
-    // 功能：提供对游戏状态的访问
     GameState& state() { return state_; }
-    
-    // 获取战斗系统
-    // 返回值：战斗系统的引用
-    // 功能：提供对战斗系统的访问
     CombatSystem& combat() { return combat_; }
     
-    // NPC对话初始化（用于测试和修复）
-    // 功能：为现有NPC添加对话内容，确保对话系统正常工作
+    // 初始化NPC对话
     void initializeNPCDialogues();
 private:
-    // 游戏状态对象
-    // 功能：存储游戏的所有状态信息，包括玩家、地图、任务等
     GameState state_{};
-    
-    // 战斗系统对象
-    // 功能：处理所有战斗相关的逻辑
     CombatSystem combat_{};
-    
-    // 命令路由器对象
-    // 功能：处理玩家的输入命令
     CommandRouter router_{};
-    
-    // 教学区详细地图标记
-    // 功能：标记玩家是否在教学区的详细地图中
     bool in_teaching_detail_ = false;
     
     void setupWorld();

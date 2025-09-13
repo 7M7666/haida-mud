@@ -26,18 +26,13 @@ bool Inventory::remove(const std::string& id,int qty){
     return true;                            // 返回成功
 }
 
-// 获取物品数量
-// 参数：id(物品ID)
-// 返回值：物品的数量，如果不存在返回0
-// 功能：查询背包中指定物品的数量
+// 查询物品数量
 int Inventory::quantity(const std::string& id) const{ 
     auto it=data_.find(id);                 // 查找物品
     return it==data_.end()?0:it->second.second; // 返回数量或0
 }
 
-// 获取背包中所有物品的列表
-// 返回值：包含所有物品的向量
-// 功能：返回背包中所有物品的副本
+// 获取所有物品列表
 std::vector<Item> Inventory::list() const{ 
     std::vector<Item> out;                  // 创建输出向量
     for(auto &kv:data_) out.push_back(kv.second.first); // 遍历所有物品并添加到向量
@@ -45,15 +40,12 @@ std::vector<Item> Inventory::list() const{
 }
 
 // 获取简单物品列表（与list()功能相同）
-// 返回值：物品列表
-// 功能：为了兼容性而保留的方法
+// 兼容性方法
 std::vector<Item> Inventory::asSimpleItems() const{ 
     return list(); 
 }
 
-// 从简单物品列表设置背包内容
-// 参数：items(物品列表)
-// 功能：清空背包并用新的物品列表填充
+// 设置背包内容
 void Inventory::setFromSimple(const std::vector<Item>& items){ 
     data_.clear();                          // 清空背包
     for(auto &it:items) data_[it.id] = {it, it.count}; // 添加所有物品
